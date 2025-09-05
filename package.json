@@ -18,8 +18,8 @@
     "test:e2e": "playwright test",
     "clean": "rm -rf .next out coverage",
     "check": "npm run type-check && npm run lint && npm run format:check",
-    "postinstall": "node scripts/fix-lightningcss.js",
-    "prebuild": "node scripts/fix-lightningcss.js"
+    "postinstall": "node scripts/fix-native-deps.js",
+    "prebuild": "node scripts/fix-native-deps.js"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
@@ -116,6 +116,24 @@
     "lightningcss-linux-arm64-gnu": "^1.30.1",
     "lightningcss-linux-x64-gnu": "^1.30.1",
     "lightningcss-linux-x64-musl": "^1.30.1",
-    "lightningcss-win32-x64-msvc": "^1.30.1"
+    "lightningcss-win32-x64-msvc": "^1.30.1",
+    "lightningcss-wasm": "^1.30.1",
+    "@next/swc-darwin-arm64": "^15.5.2",
+    "@next/swc-darwin-x64": "^15.5.2",
+    "@next/swc-linux-x64-gnu": "^15.5.2",
+    "@next/swc-linux-x64-musl": "^15.5.2",
+    "@next/swc-linux-arm64-gnu": "^15.5.2",
+    "@next/swc-win32-x64-msvc": "^15.5.2",
+    "@img/sharp-darwin-arm64": "^0.34.3",
+    "@img/sharp-darwin-x64": "^0.34.3",
+    "@img/sharp-linux-x64": "^0.34.3",
+    "@img/sharp-linux-arm64": "^0.34.3",
+    "@img/sharp-win32-x64": "^0.34.3",
+    "@esbuild/darwin-arm64": "^0.24.0",
+    "@esbuild/darwin-x64": "^0.24.0",
+    "@esbuild/linux-x64": "^0.24.0",
+    "@esbuild/linux-arm64": "^0.24.0",
+    "@esbuild/win32-x64": "^0.24.0",
+    "esbuild-wasm": "^0.24.0"
   }
 }
