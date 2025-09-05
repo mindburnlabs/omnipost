@@ -17,7 +17,9 @@
     "test:coverage": "jest --coverage",
     "test:e2e": "playwright test",
     "clean": "rm -rf .next out coverage",
-    "check": "npm run type-check && npm run lint && npm run format:check"
+    "check": "npm run type-check && npm run lint && npm run format:check",
+    "postinstall": "node scripts/fix-lightningcss.js",
+    "prebuild": "node scripts/fix-lightningcss.js"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
@@ -102,5 +104,19 @@
     "tailwindcss": "^4",
     "ts-jest": "^29.1.2",
     "typescript": "^5"
+  },
+  "optionalDependencies": {
+    "@tailwindcss/oxide-darwin-arm64": "^4.1.11",
+    "@tailwindcss/oxide-darwin-x64": "^4.1.11",
+    "@tailwindcss/oxide-linux-arm64-gnu": "^4.1.11",
+    "@tailwindcss/oxide-linux-x64-gnu": "^4.1.11",
+    "@tailwindcss/oxide-linux-x64-musl": "^4.1.11",
+    "@tailwindcss/oxide-win32-x64-msvc": "^4.1.11",
+    "lightningcss-darwin-arm64": "^1.30.1",
+    "lightningcss-darwin-x64": "^1.30.1",
+    "lightningcss-linux-arm64-gnu": "^1.30.1",
+    "lightningcss-linux-x64-gnu": "^1.30.1",
+    "lightningcss-linux-x64-musl": "^1.30.1",
+    "lightningcss-win32-x64-msvc": "^1.30.1"
   }
 }
