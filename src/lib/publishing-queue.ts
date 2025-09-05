@@ -358,7 +358,17 @@ export async function getPublishingQueue(): Promise<PublishingQueue> {
   return publishingQueue;
 }
 
-// Initialize publishing queue on server start
+// Initialize publishing queue on server start only if database is configured
 if (typeof window === 'undefined') {
-  getPublishingQueue().catch(console.error);
+  // Check if required environment variables are set before attempting to initialize
+  const hasRequiredEnvVars = process.env.POSTGREST_URL && process.env.POSTGREST_SCHEMA && process.env.POSTGREST_API_KEY;
+  
+  if (hasRequiredEnvVars) {
+    getPublishingQueue().catch(error => {
+      console.error('Failed to initialize publishing queue:', error);
+      console.log('Publishing queue will be initialized on demand when database is available.');
+    });
+  } else {
+    console.log('PostgREST environment variables not configured. Publishing queue will initialize on demand.');
+  }
 }

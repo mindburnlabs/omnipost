@@ -47,6 +47,14 @@ export async function safeFetch<T>(url: string, init?: RequestInit): Promise<T> 
 if (typeof window !== 'undefined') {
   window.addEventListener('unhandledrejection', (event) => {
     const reason: any = event.reason;
+    
+    // Don't log expected auth errors during development
+    if (reason instanceof ApiError && reason.status === 401) {
+      // Silently handle auth errors - they're expected when database isn't configured
+      event.preventDefault();
+      return;
+    }
+    
     console.error('UNHANDLED REJECTION', {
       name: reason?.name,
       message: reason?.message,

@@ -1,5 +1,5 @@
 {
-  "name": "nextjs-template",
+  "name": "omnipost",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -7,7 +7,17 @@
     "dev:debug": "NODE_OPTIONS='--inspect' next dev",
     "build": "next build",
     "start": "next start --port ${PORT:-3000} --hostname 0.0.0.0",
-    "lint": "next lint"
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "format": "prettier --write \"src/**/*.{js,ts,jsx,tsx,json,css,md}\"",
+    "format:check": "prettier --check \"src/**/*.{js,ts,jsx,tsx,json,css,md}\"",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "clean": "rm -rf .next out coverage",
+    "check": "npm run type-check && npm run lint && npm run format:check"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
@@ -74,12 +84,22 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.4.5",
+    "@testing-library/react": "^15.0.7",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/jest": "^29.5.12",
     "@types/next": "^8.0.7",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@playwright/test": "^1.44.0",
+    "prettier-plugin-tailwindcss": "^0.6.5",
+    "ts-jest": "^29.1.2",
     "eslint": "^9",
     "eslint-config-next": "15.2.4",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "prettier": "^3.2.5",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

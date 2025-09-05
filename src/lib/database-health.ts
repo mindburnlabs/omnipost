@@ -181,7 +181,17 @@ export async function getDatabaseHealthMonitor(): Promise<DatabaseHealthMonitor>
   return dbHealthMonitor;
 }
 
-// Initialize on server start
+// Initialize on server start only if database is configured
 if (typeof window === 'undefined') {
-  getDatabaseHealthMonitor().catch(console.error);
+  // Check if required environment variables are set before attempting to initialize
+  const hasRequiredEnvVars = process.env.POSTGREST_URL && process.env.POSTGREST_SCHEMA && process.env.POSTGREST_API_KEY;
+  
+  if (hasRequiredEnvVars) {
+    getDatabaseHealthMonitor().catch(error => {
+      console.error('Failed to initialize database health monitor:', error);
+      console.log('Database health monitor will be initialized on demand when database is available.');
+    });
+  } else {
+    console.log('PostgREST environment variables not configured. Database health monitor will initialize on demand.');
+  }
 }

@@ -347,7 +347,17 @@ export async function getPublishingEngine(): Promise<PublishingEngine> {
   return publishingEngine;
 }
 
-// Initialize publishing engine on server start
+// Initialize publishing engine on server start only if database is configured
 if (typeof window === 'undefined') {
-  getPublishingEngine().catch(console.error);
+  // Check if required environment variables are set before attempting to initialize
+  const hasRequiredEnvVars = process.env.POSTGREST_URL && process.env.POSTGREST_SCHEMA && process.env.POSTGREST_API_KEY;
+  
+  if (hasRequiredEnvVars) {
+    getPublishingEngine().catch(error => {
+      console.error('Failed to initialize publishing engine:', error);
+      console.log('Publishing engine will be initialized on demand when database is available.');
+    });
+  } else {
+    console.log('PostgREST environment variables not configured. Publishing engine will initialize on demand.');
+  }
 }
