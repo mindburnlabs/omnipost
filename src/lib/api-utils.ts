@@ -174,7 +174,7 @@ export async function sendVerificationEmail(
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Postgrest-API-Key": process.env.POSTGREST_API_KEY || "",
+      "apikey": process.env.POSTGREST_API_KEY || "",
     },
     body: JSON.stringify({
       to: email,

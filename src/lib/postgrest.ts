@@ -34,7 +34,7 @@ export function createPostgrestClient(userToken?: string) {
   }
 
   if (POSTGREST_API_KEY) {
-    client.headers.set("Postgrest-API-Key", POSTGREST_API_KEY);
+    client.headers.set("apikey", POSTGREST_API_KEY);
   }
   return client;
 }
