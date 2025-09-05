@@ -18,14 +18,12 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
-# Copy package files
+# Copy package files and scripts (needed for postinstall)
 COPY package.json package-lock.json* .npmrc ./
+COPY scripts/ ./scripts/
 # Install dependencies with correct platform-specific optional packages (lightningcss, oxide, sharp, etc.)
 # Use npm install (not ci) to allow resolving Linux-specific optional deps even if lockfile was generated on macOS
 RUN npm install --include=optional --no-audit --progress=false
-# The postinstall script will automatically handle native binary linking
-# But we can also run it explicitly to ensure everything is set up correctly
-RUN npm run postinstall || true
 
 # Rebuild the source code only when needed
 FROM base AS builder
