@@ -52,5 +52,9 @@ temp/
 # Optional eslint cache
 .eslintcache
 
+# TypeScript build info
+*.tsbuildinfo
+tsconfig.tsbuildinfo
+
 # Vercel
 .vercel
