@@ -1,23 +1,44 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
 
 export function GoogleLoginButton() {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
-  const handleClick = () => {
-    // Google authentication is currently disabled
-    // TODO: Implement direct Google OAuth when needed
-    alert('Google authentication is not currently configured. Please use email/password login.');
+  const handleGoogleSignIn = async () => {
+    try {
+      setIsLoading(true);
+      
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      
+      if (error) {
+        console.error('Google sign-in error:', error);
+        alert('Failed to sign in with Google. Please try again or contact support.');
+      }
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      alert('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   return (
     <Button
       type="button"
       variant="outline"
-      onClick={handleClick}
-      className={`w-full opacity-50 cursor-not-allowed`}
-      disabled
+      onClick={handleGoogleSignIn}
+      className="w-full"
+      disabled={isLoading}
     >
       <svg
         className="w-5 h-5"
@@ -41,7 +62,9 @@ export function GoogleLoginButton() {
           fill="#EA4335"
         />
       </svg>
-      <span className="text-sm font-medium">Continue with Google (Coming Soon)</span>
+      <span className="text-sm font-medium">
+        {isLoading ? 'Signing in...' : 'Continue with Google'}
+      </span>
     </Button>
   );
 }
