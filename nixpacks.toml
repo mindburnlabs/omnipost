@@ -1,9 +1,24 @@
+[phases.install]
+cmd = "npm ci --only=production"
+
 [phases.build]
-cmds = ["pnpm install", "pnpm run build"]
+cmds = [
+  "npm ci",
+  "npm run build",
+  "npm prune --production"
+]
 
 [phases.start]
-cmd = "pnpm start"
+cmd = "npm start"
 
 [variables]
 NODE_ENV = "production"
 PORT = "3000"
+NEXT_TELEMETRY_DISABLED = "1"
+
+# Railway-specific optimizations
+[build]
+builders = ["nodejs"]
+
+[build.env]
+NPM_CONFIG_PRODUCTION = "false"

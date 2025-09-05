@@ -167,23 +167,37 @@ export async function sendVerificationEmail(
   const appName = process.env.NEXT_PUBLIC_APP_NAME || 'OmniPost';
   const htmlTemplate = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Email Verification</title><style>body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Oxygen,Ubuntu,Cantarell,sans-serif;margin:0;padding:0;background-color:#f8fafc;color:#334155;}.container{max-width:600px;margin:0 auto;background-color:#ffffff;border-radius:12px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.1);overflow:hidden;}.header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:40px 30px;text-align:center;}.header h1{color:#ffffff;margin:0;font-size:28px;font-weight:600;}.content{padding:40px 30px;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;}.verification-code{background-color:#f1f5f9;border:2px dashed #cbd5e1;border-radius:8px;padding:20px;font-size:32px;font-weight:700;letter-spacing:4px;color:#1e293b;font-family:'Courier New',monospace;}.message{font-size:16px;line-height:1.6;}.security-note{background-color:#fef3c7;border-left:4px solid #f59e0b;padding:16px;border-radius:0 8px 8px 0;color:#92400e;}@media (max-width:600px){.container{margin:0 10px;border-radius:8px;}.content{gap:20px;}}</style></head><body><div class="container"><div class="header"><h1>🔐 Email Verification</h1></div><div class="content"><div class="message">Continue signing up for ${appName} by entering the code below:</div><div class="verification-code">${code}</div><div class="message">This code will expire in <strong>3 minutes</strong> for security purposes.</div><div class="security-note"><strong>Security Notice:</strong> If you didn't request this verification, please ignore this email. Never share this code with anyone.</div></div></div></body></html>`;
   
-  // Use Zoer email service instead of Resend to avoid dependency issues
-  const url = `${process.env.NEXT_PUBLIC_ZOER_HOST}/zapi/app/email/send`;
+  try {
+    // Use Resend for email delivery
+    if (!process.env.RESEND_KEY) {
+      console.warn('RESEND_KEY not configured - email verification disabled in development');
+      return true; // Return success in development even without email
+    }
 
-  await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "apikey": process.env.POSTGREST_API_KEY || "",
-    },
-    body: JSON.stringify({
-      to: email,
-      subject: "Email Verification Code",
-      html: htmlTemplate,
-    }),
-  });
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.RESEND_KEY}`,
+      },
+      body: JSON.stringify({
+        from: `${appName} <noreply@omnipost.app>`,
+        to: [email],
+        subject: "Email Verification Code",
+        html: htmlTemplate,
+      }),
+    });
 
-  return true;
+    if (!response.ok) {
+      console.error('Failed to send verification email:', await response.text());
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('Email service error:', error);
+    return false;
+  }
 }
 
 export function setCookie(

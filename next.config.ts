@@ -1,6 +1,8 @@
 
 import type { NextConfig } from "next";
 
+const isRailway = process.env.RAILWAY_ENVIRONMENT === 'production';
+
 const nextConfig: NextConfig = {
   /* config options here */
   productionBrowserSourceMaps: true, // Enable source maps for better debugging
@@ -8,6 +10,10 @@ const nextConfig: NextConfig = {
     // Allow builds to complete even with ESLint errors (use sparingly)
     ignoreDuringBuilds: false,
   },
+  // Railway optimizations
+  output: isRailway ? 'standalone' : undefined,
+  compress: true,
+  poweredByHeader: false,
   async headers() {
     return [
       {

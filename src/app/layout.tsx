@@ -6,7 +6,6 @@ import { AuthProvider } from "@/components/auth/AuthProvider";
 import { Toaster } from "@/components/ui/sonner";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { DemoModeIndicator } from "@/components/demo/DemoModeIndicator";
-import ZoerCopilot from "@/components/ZoerCopilot";
 
 import "./globals.css";
 
@@ -35,7 +34,6 @@ export default function RootLayout({
       <DemoModeIndicator />
       {children}
       <Toaster />
-      <ZoerCopilot />
     </>
   );
 

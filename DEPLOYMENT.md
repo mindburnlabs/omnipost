@@ -18,7 +18,24 @@ OmniPost supports two deployment modes:
 
 ## 🚀 Deployment Options
 
-### Option 1: Vercel (Recommended)
+### Option 1: Railway (Recommended for Full-Stack Apps)
+
+**Best for**: Production deployments with database integration
+
+See [RAILWAY.md](./RAILWAY.md) for complete Railway deployment guide.
+
+**Quick Deploy:**
+```bash
+# Install Railway CLI
+npm install -g @railway/cli
+
+# Deploy to Railway
+railway login
+railway init
+railway up
+```
+
+### Option 2: Vercel (Recommended for Static/Serverless)
 
 1. **Connect Repository**
    ```bash

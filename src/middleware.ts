@@ -9,7 +9,6 @@ export async function middleware(request: NextRequest) {
   // Skip middleware for public routes and API routes
   if (
     pathname.startsWith('/next_api/') ||
-    pathname.startsWith('/zoer_chatbot/') ||
     pathname.startsWith('/_next/') ||
     pathname.startsWith('/favicon') ||
     pathname === '/login' ||
