@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AppLayout } from '@/components/layout/AppLayout';
 
@@ -23,12 +23,59 @@ interface WhopContext {
   access_granted: boolean;
 }
 
-export default function WhopExperiencePage({ params }: { params: { slug?: string[] } }) {
+interface WhopPageProps {
+  params: Promise<{ slug?: string[] }>;
+}
+
+export default function WhopExperiencePage({ params }: WhopPageProps) {
+  return <WhopPageContent params={params} />;
+}
+
+function WhopPageContent({ params }: WhopPageProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [whopContext, setWhopContext] = useState<WhopContext | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [slug, setSlug] = useState<string[] | undefined>();
+
+  // Handle async params
+  useEffect(() => {
+    params.then(({ slug }) => setSlug(slug));
+  }, [params]);
+
+  const setupWhopUser = useCallback(async (user: WhopUser) => {
+    try {
+      // Call your backend to create/update user session for Whop users
+      const response = await fetch('/next_api/auth/whop', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          whop_user: user,
+          company_id: whopContext?.company_id,
+          app_id: whopContext?.app_id,
+          access_granted: whopContext?.access_granted
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to setup Whop user session');
+      }
+
+      const data = await response.json();
+      
+      // Navigate to appropriate page based on access level
+      if (whopContext?.access_granted) {
+        router.push('/dashboard');
+      } else {
+        router.push('/upgrade');
+      }
+    } catch (err) {
+      setError('Failed to setup user session');
+    }
+  }, [whopContext, router]);
 
   useEffect(() => {
     // Initialize Whop SDK or get context from query params/postMessage
@@ -106,39 +153,6 @@ export default function WhopExperiencePage({ params }: { params: { slug?: string
       setupWhopUser(whopContext.user);
     }
   }, [whopContext, setupWhopUser]);
-
-  const setupWhopUser = async (user: WhopUser) => {
-    try {
-      // Call your backend to create/update user session for Whop users
-      const response = await fetch('/next_api/auth/whop', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          whop_user: user,
-          company_id: whopContext?.company_id,
-          app_id: whopContext?.app_id,
-          access_granted: whopContext?.access_granted
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to setup Whop user session');
-      }
-
-      const data = await response.json();
-      
-      // Navigate to appropriate page based on access level
-      if (whopContext?.access_granted) {
-        router.push('/dashboard');
-      } else {
-        router.push('/upgrade');
-      }
-    } catch (err) {
-      setError('Failed to setup user session');
-    }
-  };
 
   if (isLoading) {
     return (

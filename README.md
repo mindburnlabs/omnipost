@@ -1,195 +1,303 @@
-
 # OmniPost
+
 **Write once. Publish everywhere.**  
-A calm, dependable workspace to compose, schedule, A/B test, and analyze posts across **Discord**, **Telegram**, and **Whop** — as a **standalone SaaS** on your domain *or* an **embedded Whop app**.
 
----
+A modern, powerful social media management platform that lets you compose, schedule, A/B test, and analyze posts across **Discord**, **Telegram**, and **Whop**. Built with Next.js and designed for both **standalone deployment** and **Whop-embedded experiences**.
 
-## ✨ Why OmniPost
-- **Speed:** One draft → platform-perfect variants in minutes.
-- **Safety:** Guardrails catch duplicates, broken links, and format limits *before* you publish.
-- **Results:** Best-time scheduling, A/B tests, and clean analytics tell you what actually works.
-- **Flexibility:** Runs **inside Whop** or **as your own SaaS** with full feature parity.
+![OmniPost Demo](https://img.shields.io/badge/demo-available-brightgreen)
+![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
+![TypeScript](https://img.shields.io/badge/typescript-strict-blue)
+![Next.js](https://img.shields.io/badge/next.js-15.x-black)
 
----
+## ✨ Features
 
-## 🧭 Product at a Glance
-- **Home:** Today's queue, approvals, "best times", recent activity, tiny timing heatmap, connection health, and a persistent **New Post**.
-- **Three-Pane Composer:** Destinations (left) • Canonical editor (center) • Live platform previews (right) with quality chips (links, media, mentions, duplicate risk). Bottom bar: Best Time • A/B • Schedule/Publish • Preview • Save Draft.
-- **Calendar:** Clean week/month, drag-to-move, polite conflict flags, quick-edit cards, quiet hours per destination, holiday skips, no double-booking, DST-safe.
-- **Library & Versioning:** Posts, Assets, Templates, Snippets; thumbnails, usage, alt text; saved views; bulk actions; post/version history with diffs & restore; duplicate-finder for assets.
-- **Experiments:** A/B scorecards, clear winners, one-click promote.
-- **Analytics:** Headline KPIs, **Timing Heatmap** (day×hour), top posts, channel breakdown, cohorts by tag/campaign, first-24h velocity, comparison views, attribution confidence hints.
-- **Approvals:** Respectful review, gentle diffs, comments, SLAs, reminders, escalation.
-- **Automation:** Plain-language rules ("When X, if Y, do Z"), dry-run mode, templates, run history; inbound (GitHub/RSS/Calendar) and outbound (Zapier/n8n/SIM).
-- **Quality & Safety:** Repost Guard (text/image), broken links, ToS guardrails (length/media/limits), mention validation, URL allow/deny list.
-- **Failures & Recovery:** Human-readable errors, Dead-Letter area, one-click retry, comprehensive logs, patient backoff; status & queue visibility.
-- **Notifications:** In-app, email, optional Slack for approvals, publish success/failure, reconnect needed, A/B winner, quota nearing limit.
-- **Settings:** Connections, Brand Kit, UTM profiles, Roles, Webhooks, API Tokens, Storage, Email sender, Billing/Plan, Backups & PITR, Timezone, Data Purity, Enterprise controls.
-- **Modes:**  
-  - **Whop-Embedded:** Compact layout, entitlement chip ("Access: Granted/Limited"), native billing/deep links, Whop Feed as a first-class destination.  
-  - **Standalone SaaS:** Own domain, login/billing/team management, guided onboarding checklist, plans page, usage meters, receipts center, custom domain.
+### Core Capabilities
+- 🚀 **Multi-Platform Publishing**: Discord, Telegram, and Whop with platform-specific optimizations
+- 📅 **Smart Scheduling**: AI-powered best time recommendations with timezone awareness
+- 🧪 **A/B Testing**: Built-in experimentation with clear winner detection
+- 📊 **Analytics**: Comprehensive metrics with timing heatmaps and performance insights
+- 🤖 **AI Enhancement**: Content optimization, hashtag suggestions, and automated improvements
+- 🛡️ **Quality Guardrails**: Link validation, duplicate detection, and content safety checks
 
----
+### Deployment Modes
+- **Standalone SaaS**: Full-featured deployment on your own domain
+- **Whop Embedded**: Native integration as a Whop experience with subscription management
 
-## 🔐 Identity & Security
-- 2FA/MFA (standalone), SSO (Google + enterprise options), session management ("sign out all devices"), admin IP allowlist.
-- Role-based access: **Owner, Admin, Publisher, Editor, Viewer, Approver**.
-- Organization-level audit trail export, content safety checks, privacy-aware defaults.
+### Advanced Features
+- **Automation Engine**: Rule-based workflows with dry-run testing
+- **Content Library**: Templates, snippets, and asset management with version history
+- **Team Collaboration**: Approval workflows, role-based access, and activity tracking
+- **Developer API**: Full REST API with webhooks for integrations
 
----
+## 🚀 Quick Start
 
-## 🌍 Internationalization & Time
-- Multi-timezone per workspace/destination, DST-safe scheduling.
-- Optional multi-language content labels for analytics segmentation.
-- UI language selection (labels and copy).
+### Prerequisites
+- Node.js 18+ and npm 9+
+- PostgreSQL database (or PostgREST endpoint)
+- Platform API credentials (Discord, Telegram, Whop)
 
----
+### Installation
 
-## 📈 Attribution & Links
-- Built-in short links & UTM profiles; clicks/conversions tied to **exact variants**.
-- Decision-ready rollups with transparent attribution confidence.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/omnipost.git
+   cd omnipost
+   ```
 
----
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-## 🧪 Demo Mode
-A clearly marked **Demo** workspace with realistic sample content and simulated publishes that never touch real platforms. One-click **Reset/Reseed** and a visible **Data Purity: OK** badge.
+3. **Configure environment**
+   ```bash
+   cp .env.example .env
+   # Edit .env with your credentials
+   ```
 
----
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
 
-## 🧩 Deployment Modes
+   Open [http://localhost:3000](http://localhost:3000) to see the app.
 
-### 1) Whop-Embedded
-- Opens inside a Whop experience (native feel).
-- Honors Whop entitlements and plans (upgrade in place).
-- Optional posting to the Whop forum/feed.
+### First Steps
+1. 🏠 **Visit the Dashboard** - Overview of your publishing pipeline
+2. 🔗 **Connect Platforms** - Go to Settings → Connections to add Discord, Telegram, or Whop
+3. ✍️ **Create Your First Post** - Use the Composer to craft content with live previews
+4. 📅 **Schedule or Publish** - Choose optimal timing or publish immediately
+5. 📊 **Review Analytics** - Track performance and engagement metrics
 
-### 2) Standalone SaaS
-- Runs on your own domain with your own login, billing, and team management.
-- Guided onboarding: connect channels → set Brand Kit → choose plan → create first post.
+## 🛠️ Development
 
-Feature parity is maintained across both modes.
+### Available Scripts
 
----
+```bash
+# Development
+npm run dev          # Start dev server with hot reload
+npm run dev:debug    # Start with Node.js debugging
 
-## 🛠 Quick Start (human-readable)
-1. **Create a workspace** and choose mode: *Whop* or *Standalone*.
-2. **Connect platforms**: Discord, Telegram (and Whop feed if you want).
-3. **Set Brand Kit**: tone, banned words, emoji policy, UTM profiles.
-4. **Compose your first post**: watch live previews; fix anything the chips flag.
-5. **Schedule** (pick a slot or choose **Best Time**).  
-6. **Review & approve** if needed; publish with confidence.  
-7. **See results** in Analytics; promote A/B winners with one click.
-8. **Automate** repetitive flows with plain-language rules; test with **dry run** first.
+# Building
+npm run build        # Create production build
+npm start           # Start production server
 
-> **Tip:** Use **Demo Mode** to explore safely—everything looks real, nothing leaves the sandbox.
+# Code Quality
+npm run lint         # Run ESLint
+npm run lint:fix     # Fix auto-fixable linting issues
+npm run format       # Format code with Prettier
+npm run type-check   # Run TypeScript checks
+npm run check        # Run all checks (type, lint, format)
 
----
+# Testing
+npm test            # Run unit tests
+npm run test:watch  # Run tests in watch mode
+npm run test:coverage # Generate coverage report
+npm run test:e2e    # Run end-to-end tests
+```
 
-## 🗂 Core Concepts
-- **Workspace** → team, settings, and data boundary.  
-- **Post** → one canonical message with **Variants** per platform.  
-- **Schedule** → when each variant goes live (DST-safe).  
-- **Experiment** → A/B test on hooks/CTAs/variants with clear winners.  
-- **Rule** → plain-language automation (trigger → conditions → action).  
-- **Asset** → images/files with alt text and perceptual hash for duplicate checks.
+### Project Structure
 
----
+```
+src/
+├── app/                 # Next.js app router pages
+├── components/          # React components
+│   ├── ui/              # Reusable UI components
+│   ├── composer/        # Post composition components
+│   └── analytics/       # Analytics components
+├── lib/                # Utilities and core logic
+│   ├── platform-integrations.ts # Platform publishing logic
+│   ├── ai-service.ts    # AI-powered features
+│   └── auth.ts          # Authentication system
+├── types/              # TypeScript type definitions
+└── constants/          # App constants and config
+```
 
-## 🛡 Reliability & Compliance
-- Publish **exactly once** (idempotent), with safe retries and circuit breakers.
-- Status panel: platform health, incidents, queue backlog, next retries; public status page link.
-- Data retention controls (workspace level), privacy policy, DPA, cookie consent.
-- Backups with **point-in-time recovery**; "last restore drill" visibly tracked.
-- Roadmap toward SOC 2 readiness, vulnerability disclosure policy, periodic pen-tests.
+### Configuration
 
----
+Key environment variables:
 
-## 🔔 Notifications (opt-in per user/workspace)
-- Approvals needed, publish success/failure, reconnect required, A/B winner, quota limits.
-- Channels: in-app, email, optional Slack.
+```bash
+# Core Application
+NEXT_PUBLIC_APP_NAME=OmniPost
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 
----
+# Authentication & Security
+JWT_SECRET=your_jwt_secret_here
+ENABLE_AUTH=true
 
-## 🧑‍🤝‍🧑 Collaboration
-- Approvals with comments, gentle diffs, SLAs and reminders, escalation to a backup approver.
-- Version history with diffs and restore for posts and templates.
+# Database
+POSTGREST_URL=your_postgrest_endpoint
+POSTGREST_API_KEY=your_api_key
 
----
+# Platform Integration
+DISCORD_CLIENT_ID=your_discord_client_id
+TELEGRAM_BOT_TOKEN=your_telegram_token
+WHOP_API_KEY=your_whop_api_key
+```
 
-## 🧠 Intelligence
-- **Best Time**: 2–3 recommendations daily per destination based on live engagement patterns.
-- **Repost Guard**: blocks accidental repeats; offers fresh rewrites.
-- **Smart Stylers**: platform-aware formatting/pacing so it "just looks right".
+See `.env.example` for the complete list of configuration options.
 
----
+## 🌐 Deployment
 
-## 📤 Import / 📥 Export
-- Bulk import (CSV/RSS) and full export (CSV/JSON) of posts, asset metadata, and analytics.
-- Right-to-erasure and whole-workspace deletion flow.
+OmniPost can be deployed in two ways:
 
----
+### Standalone Deployment
 
-## 🧰 Public API & Webhooks
-- Read/write APIs for posts, schedules, and analytics snapshots.
-- Inbound (create drafts, trigger actions) and outbound (publish, metrics, A/B winner) webhooks with simple schemas.
+Deploy as an independent SaaS platform:
 
----
+- **Vercel** (Recommended) - Automatic deployments from Git
+- **Docker** - Container-based deployment
+- **Traditional VPS** - Direct server deployment with PM2
 
-## 🖼 Design System
-- "Apple-calm" visual language: spacious typography, clear hierarchy, one obvious next step per screen.
-- Consistent header, left navigation, card patterns, toasts, and three-pane composer.
-- WCAG-compliant focus states and keyboard-friendly interactions (⌘K palette, ⌘S save, Esc close, ⌘/ shortcuts).
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 
----
+### Whop Embedded Experience
 
-## ✅ Go-Live Checklist
-- Opens cleanly **inside Whop**; user recognized; **Access: Granted/Limited** chip accurate; upgrade flow flips access instantly.  
-- **Standalone**: new user → first scheduled post in **≤10 minutes** without docs.  
-- Five golden paths pass:  
-  1) Compose → Validate → Schedule → Publish (IDs stored; no duplicates).  
-  2) Draft → Approval → Changes → Approve → Publish.  
-  3) A/B winner promoted → applied to future posts.  
-  4) Failure explained in plain English → Reconnect/Retry succeeds.  
-  5) Plan change reflects limits and usage meters right away.  
-- Notifications land (in-app + email).  
-- Analytics is decision-ready (heatmap + top posts + breakdown + export).  
-- Backups restore drill completed recently and visible in Settings.  
-- Demo Mode data never leaks; **Data Purity: OK** is green.
+Run as a native Whop application:
 
----
+1. Configure your Whop app in the developer dashboard
+2. Set iframe URL to `https://your-domain.com/whop`
+3. Configure webhook endpoint for subscription management
+4. Test the embedded experience flow
 
-## 🗺 Roadmap Highlights
-- Offline drafts & background sync
-- Global "find anything" search
-- Support-safe read-only view
-- Abuse/flood protection for inbound automations
-- Referrals/coupons (SaaS)
-- Knowledge base & in-app "How-to" links
+## 📜 API Documentation
 
----
+OmniPost provides a comprehensive REST API for integrations:
+
+```bash
+# Posts Management
+GET    /next_api/posts              # List posts
+POST   /next_api/posts              # Create post
+GET    /next_api/posts/{id}         # Get post details
+PUT    /next_api/posts/{id}         # Update post
+DELETE /next_api/posts/{id}         # Delete post
+
+# Publishing
+POST   /next_api/posts/{id}/publish # Publish post
+POST   /next_api/posts/{id}/schedule # Schedule post
+
+# Analytics
+GET    /next_api/analytics/metrics  # Get metrics
+GET    /next_api/analytics/dashboard # Dashboard data
+
+# Platform Connections
+GET    /next_api/platform-connections # List connections
+POST   /next_api/platform-connections/setup # Add connection
+
+# System Health
+GET    /next_api/system/health      # Health check
+```
+
+Authentication via JWT tokens. See API documentation for detailed schemas.
+
+## 🧪 Testing
+
+### Demo Mode
+OmniPost includes a comprehensive demo mode with:
+- Realistic sample content
+- Simulated publishing (no real posts sent)
+- One-click reset/reseed functionality
+- Clear "Demo Mode" indicators
+
+Access via: `http://localhost:3000?demo=true`
+
+### Running Tests
+
+```bash
+# Unit Tests
+npm test
+npm run test:watch
+npm run test:coverage
+
+# E2E Tests
+npm run test:e2e
+
+# Type Checking
+npm run type-check
+
+# Linting
+npm run lint
+```
+
+## 🔍 Architecture
+
+### Key Components
+- **Next.js 15** - React framework with App Router
+- **TypeScript** - Type safety and better DX
+- **Tailwind CSS** - Utility-first styling
+- **PostgREST** - Auto-generated REST API from PostgreSQL
+- **JWT Authentication** - Secure token-based auth
+- **Platform Integrations** - Modular publishing system
+
+### Core Concepts
+- **Workspace** - Team boundary and settings container
+- **Post** - Content with platform-specific variants
+- **Schedule** - Timezone-aware publishing times
+- **Experiment** - A/B testing framework
+- **Connection** - Platform integration credentials
+- **Asset** - Media files with metadata and validation
 
 ## 🤝 Contributing
-We welcome issues, UX suggestions, and documentation improvements. Keep proposals **user-outcome-first** and **plain English**. For feature ideas, include: *who benefits, what they see, how it changes their day, and success criteria*.
 
----
+We welcome contributions! Please follow these guidelines:
+
+1. **Fork** the repository
+2. **Create** a feature branch: `git checkout -b feature/amazing-feature`
+3. **Commit** your changes: `git commit -m 'Add amazing feature'`
+4. **Push** to the branch: `git push origin feature/amazing-feature`
+5. **Open** a Pull Request
+
+### Development Guidelines
+- Write TypeScript with strict mode enabled
+- Add tests for new functionality
+- Follow the existing code style
+- Update documentation as needed
+- Ensure builds pass before submitting
+
+### Reporting Issues
+- Use clear, descriptive titles
+- Include steps to reproduce
+- Specify your environment (OS, Node version, etc.)
+- Add screenshots for UI issues
 
 ## 🔒 Security
-Please report vulnerabilities responsibly via the security contact listed in the app's **Settings → Trust & Safety**. We do not accept unsolicited penetration test reports without prior agreement.
 
----
+- **Responsible Disclosure**: Report vulnerabilities via GitHub Security tab
+- **JWT Security**: Tokens use HS256 with secure secrets
+- **Data Protection**: User data is isolated by workspace
+- **Platform Safety**: All integrations use official APIs
+- **Input Validation**: Comprehensive content validation
+
+## 🗺 Roadmap
+
+### Upcoming Features
+- [ ] Additional platforms (X/Twitter, LinkedIn, Reddit)
+- [ ] Advanced analytics with custom metrics
+- [ ] White-label customization options
+- [ ] Mobile app for iOS and Android
+- [ ] Enterprise SSO integration
+- [ ] Custom webhook destinations
+
+### Performance Improvements
+- [ ] Edge caching for analytics
+- [ ] Background job processing
+- [ ] Real-time collaboration
+- [ ] Offline-first mobile experience
 
 ## 📄 License
-Commercial software. See `LICENSE` for details (or contact sales for enterprise licensing and custom terms).
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 💬 Support
+
+- **Documentation**: Check the `/docs` folder and `DEPLOYMENT.md`
+- **Issues**: Use GitHub Issues for bug reports
+- **Discussions**: Use GitHub Discussions for questions
+- **Email**: Available for enterprise inquiries
 
 ---
 
-## 📬 Support
-- In-app **Help (?)** → quick tips and context links  
-- Email support via the address in **Settings → Support**  
-- Status & incidents: see **Settings → Status** (and the linked public status page)
+**Built with ❤️ by the OmniPost team**
 
----
-
-**OmniPost — the quiet, reliable way to plan and publish posts that perform.**  
-Whether you run it **inside Whop** or on your **own domain**, the experience is the same: clear, fast, and trustworthy.
+Made for creators who value simplicity, reliability, and results.

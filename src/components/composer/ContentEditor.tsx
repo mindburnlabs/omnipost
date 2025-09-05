@@ -131,6 +131,7 @@ export function ContentEditor({
                 size="sm"
                 onClick={() => insertFormatting('image')}
               >
+                {/* eslint-disable-next-line jsx-a11y/alt-text */}
                 <Image className="h-4 w-4" />
               </Button>
               <Separator orientation="vertical" className="h-6" />

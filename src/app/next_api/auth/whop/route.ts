@@ -96,7 +96,7 @@ export const POST = async (request: NextRequest) => {
       }
 
       // Generate session token for the user
-      const sessionToken = await generateToken({ id: user.id, email: user.email, role: user.role });
+      const sessionToken = await generateToken({ sub: user.id.toString(), email: user.email, role: user.role });
       
       return createSuccessResponse({
         message: 'Whop authentication successful',

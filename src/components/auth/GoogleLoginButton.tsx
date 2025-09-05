@@ -6,8 +6,9 @@ import { Button } from "@/components/ui/button";
 export function GoogleLoginButton() {
 
   const handleClick = () => {
-    const url = `${process.env.NEXT_PUBLIC_ZOER_HOST}/auth/google/login?fromUrl=${window.location.origin}/next_api/auth/google-login?callback_url=${window.location.origin}&appCode=${process.env.NEXT_PUBLIC_APP_CODE}`;
-    window.location.href = url;
+    // Google authentication is currently disabled
+    // TODO: Implement direct Google OAuth when needed
+    alert('Google authentication is not currently configured. Please use email/password login.');
   };
   
   return (
@@ -15,7 +16,8 @@ export function GoogleLoginButton() {
       type="button"
       variant="outline"
       onClick={handleClick}
-      className={`w-full`}
+      className={`w-full opacity-50 cursor-not-allowed`}
+      disabled
     >
       <svg
         className="w-5 h-5"
@@ -39,7 +41,7 @@ export function GoogleLoginButton() {
           fill="#EA4335"
         />
       </svg>
-      <span className="text-sm font-medium">Continue with Google</span>
+      <span className="text-sm font-medium">Continue with Google (Coming Soon)</span>
     </Button>
   );
-} 
+}
