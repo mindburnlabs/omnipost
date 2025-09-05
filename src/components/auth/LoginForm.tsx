@@ -111,7 +111,7 @@ export function LoginForm({
       <CardContent>
         {/* Google登录按钮 */}
         <div className="">
-          <GoogleLoginButton />
+          <GoogleLoginButton onError={(errorMsg) => setError(errorMsg)} />
           <div className="relative my-[20px]">
             <div className="absolute inset-0 flex items-center">
               <Separator className="w-full" />

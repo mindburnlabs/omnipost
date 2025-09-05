@@ -10,29 +10,44 @@ import { LandingPage } from "@/components/landing/LandingPage";
 export default function Home() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
-  const [showLanding, setShowLanding] = useState(false);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   useEffect(() => {
+    console.log('Home page effect:', { isLoading, user: !!user, ENABLE_AUTH });
+    
+    // Set a timeout to ensure we don't get stuck in loading state
+    const timeout = setTimeout(() => {
+      console.log('Timeout reached, showing landing page');
+      setInitialLoad(false);
+    }, 3000); // 3 second timeout
+
     if (!isLoading) {
+      clearTimeout(timeout);
+      
       // If user is authenticated, redirect to dashboard
       if (user) {
+        console.log('User authenticated, redirecting to dashboard');
         router.replace('/dashboard');
         return;
       }
       
       // If auth is disabled, redirect to dashboard
       if (!ENABLE_AUTH) {
+        console.log('Auth disabled, redirecting to dashboard');
         router.replace('/dashboard');
         return;
       }
       
-      // Show landing page for unauthenticated users when auth is enabled
-      setShowLanding(true);
+      // Auth is enabled but no user - show landing page
+      console.log('Auth enabled, no user, showing landing page');
+      setInitialLoad(false);
     }
+
+    return () => clearTimeout(timeout);
   }, [router, user, isLoading]);
 
-  // Show loading spinner while determining what to display
-  if (isLoading || (!showLanding && ENABLE_AUTH && !user)) {
+  // Show loading spinner only for a short time
+  if (isLoading && initialLoad) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center space-y-4">
@@ -43,6 +58,11 @@ export default function Home() {
     );
   }
 
-  // Show landing page for unauthenticated users
+  // Show landing page for unauthenticated users when auth is enabled
+  if (ENABLE_AUTH && !user) {
+    return <LandingPage />;
+  }
+
+  // Fallback - should not reach here, but show landing page anyway
   return <LandingPage />;
 }
