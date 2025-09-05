@@ -311,7 +311,7 @@ export function AssetManager() {
                       </p>
                       <div className="flex items-center justify-between">
                         <Badge variant="outline" className="text-xs">
-                          {asset.file_type.split('/')[1].toUpperCase()}
+                          {(asset.file_type.split('/')[1] || asset.file_type).toUpperCase()}
                         </Badge>
                         <span className="text-xs text-muted-foreground">
                           {formatFileSize(asset.file_size)}

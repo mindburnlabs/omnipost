@@ -103,7 +103,7 @@ export const POST = requestMiddleware(async (request, context) => {
         provider: body?.provider || '',
         api_key: body?.api_key || '',
         model: body?.model || '',
-        error: error.errors[0].message
+        error: error.errors[0]?.message || "Validation error"
       });
     }
     

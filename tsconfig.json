@@ -6,7 +6,7 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
-    "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": false,
     "noUncheckedIndexedAccess": true,
     "noEmit": true,
     "esModuleInterop": true,

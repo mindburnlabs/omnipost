@@ -33,15 +33,25 @@ export const POST = requestMiddleware(async (request, context) => {
 
     const aiSystem = await getAIProviderSystem();
     
-    const result = await aiSystem.invokeAI({
+    // Filter out undefined values for exactOptionalPropertyTypes
+    const invokeParams: any = {
       workspace_id: validatedData.workspace_id,
       user_id: userId,
       alias_name: validatedData.alias_name,
-      capability: validatedData.capability,
-      prompt: validatedData.prompt,
-      input_data: validatedData.input_data,
-      options: validatedData.options
-    });
+      capability: validatedData.capability
+    };
+    
+    if (validatedData.prompt !== undefined) {
+      invokeParams.prompt = validatedData.prompt;
+    }
+    if (validatedData.input_data !== undefined) {
+      invokeParams.input_data = validatedData.input_data;
+    }
+    if (validatedData.options !== undefined) {
+      invokeParams.options = validatedData.options;
+    }
+    
+    const result = await aiSystem.invokeAI(invokeParams);
 
     // Add routing info for client
     const responseData = {
@@ -60,7 +70,7 @@ export const POST = requestMiddleware(async (request, context) => {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return createErrorResponse({
-        errorMessage: error.errors[0].message,
+        errorMessage: error.errors[0]?.message || "Validation error",
         status: 400,
       });
     }

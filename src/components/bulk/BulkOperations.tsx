@@ -63,12 +63,15 @@ export function BulkOperations() {
   const parseCSV = (csv: string) => {
     try {
       const lines = csv.split('\n').filter(line => line.trim());
-      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+      if (lines.length === 0) {
+        throw new Error('CSV file is empty');
+      }
+      const headers = lines[0]?.split(',').map(h => h.trim().toLowerCase()) || [];
       
       const posts: BulkPost[] = [];
       
       for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(',').map(v => v.trim());
+        const values = lines[i]?.split(',').map(v => v.trim()) || [];
         const post: BulkPost = {
           content: '',
           platforms: [],
@@ -124,6 +127,7 @@ export function BulkOperations() {
     try {
       for (let i = 0; i < bulkPosts.length; i++) {
         const post = bulkPosts[i];
+        if (!post) continue;
         
         // Update status to processing
         setBulkPosts(prev => prev.map((p, index) => 

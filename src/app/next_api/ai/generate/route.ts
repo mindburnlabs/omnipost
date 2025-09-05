@@ -21,21 +21,33 @@ export const POST = requestMiddleware(async (request, context) => {
     
     const aiService = await getAIService();
     
-    const response = await aiService.generateContent({
+    // Filter out undefined values for exactOptionalPropertyTypes
+    const generateParams: any = {
       prompt: validatedData.prompt,
-      alias: validatedData.alias, // Use alias instead of provider
-      maxTokens: validatedData.maxTokens,
-      temperature: validatedData.temperature,
-      image: validatedData.image,
-      userId: userId || undefined,
+      alias: validatedData.alias,
       workspaceId: 1
-    });
+    };
+    
+    if (validatedData.maxTokens !== undefined) {
+      generateParams.maxTokens = validatedData.maxTokens;
+    }
+    if (validatedData.temperature !== undefined) {
+      generateParams.temperature = validatedData.temperature;
+    }
+    if (validatedData.image !== undefined) {
+      generateParams.image = validatedData.image;
+    }
+    if (userId > 0) {
+      generateParams.userId = userId;
+    }
+    
+    const response = await aiService.generateContent(generateParams);
     
     return createSuccessResponse(response);
   } catch (error) {
     if (error instanceof z.ZodError) {
       return createErrorResponse({
-        errorMessage: error.errors[0].message,
+        errorMessage: error.errors[0]?.message || "Validation error",
         status: 400,
       });
     }

@@ -91,7 +91,7 @@ export const POST = requestMiddleware(async (request: NextRequest) => {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return createErrorResponse({
-        errorMessage: error.errors[0].message,
+        errorMessage: error.errors[0]?.message || "Validation error",
         status: 401,
       });
     }
