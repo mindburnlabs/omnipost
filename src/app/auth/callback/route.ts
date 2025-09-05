@@ -6,7 +6,16 @@ import { generateAdminUserToken } from '@/lib/auth'
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  const error = requestUrl.searchParams.get('error')
+  const errorDescription = requestUrl.searchParams.get('error_description')
   const origin = requestUrl.origin
+
+  // Handle OAuth errors from provider
+  if (error) {
+    console.error('OAuth provider error:', error, errorDescription)
+    const errorMessage = encodeURIComponent(errorDescription || 'OAuth authentication failed')
+    return NextResponse.redirect(`${origin}/login?error=oauth_provider_error&message=${errorMessage}`)
+  }
 
   if (code) {
     try {
@@ -15,7 +24,8 @@ export async function GET(request: NextRequest) {
       
       if (authError) {
         console.error('Auth exchange error:', authError)
-        return NextResponse.redirect(`${origin}/login?error=auth_failed`)
+        const errorMessage = encodeURIComponent(authError.message || 'Authentication failed')
+        return NextResponse.redirect(`${origin}/login?error=auth_exchange_failed&message=${errorMessage}`)
       }
 
       if (session?.user) {
@@ -108,17 +118,19 @@ export async function GET(request: NextRequest) {
           })
 
           return response
-        } catch (dbError) {
+        } catch (dbError: any) {
           console.error('Database error during Google auth:', dbError)
-          return NextResponse.redirect(`${origin}/login?error=database_error`)
+          const errorMessage = encodeURIComponent(dbError?.message || 'Database error occurred during authentication')
+          return NextResponse.redirect(`${origin}/login?error=database_error&message=${errorMessage}`)
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Google OAuth callback error:', error)
-      return NextResponse.redirect(`${origin}/login?error=oauth_error`)
+      const errorMessage = encodeURIComponent(error?.message || 'OAuth callback error')
+      return NextResponse.redirect(`${origin}/login?error=oauth_error&message=${errorMessage}`)
     }
   }
 
   // No code found, redirect to login with error
-  return NextResponse.redirect(`${origin}/login?error=no_code`)
+  return NextResponse.redirect(`${origin}/login?error=no_code&message=No%20authorization%20code%20received`)
 }

@@ -5,6 +5,7 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import { User } from '@/types/auth';
 import { api, ApiError } from '@/lib/api-client';
 import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabase';
 import { ENABLE_AUTH, DEFAULT_DEV_USER_ID } from "@/constants/auth";
 
 interface AuthContextType {
@@ -14,6 +15,7 @@ interface AuthContextType {
   register: (email: string, password: string, passcode: string) => Promise<void>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  googleLogin: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -58,9 +60,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
+  const googleLogin = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      
+      if (error) {
+        console.error('Google sign-in error:', error);
+        throw new Error('Failed to sign in with Google. Please try again.');
+      }
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      throw error;
+    }
+  };
+
   const logout = async () => {
     try {
       if (ENABLE_AUTH) {
+        // Sign out from Supabase auth
+        await supabase.auth.signOut();
+        // Also logout from our custom auth system
         await api.post('/auth/logout');
       }
     } catch (error) {
@@ -87,6 +111,34 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     try {
+      // First, check for Supabase session
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError) {
+        console.error('Supabase session error:', sessionError);
+      }
+      
+      // If we have a Supabase session but no local user, try to get user data
+      if (session?.user && !user) {
+        try {
+          // Try to get user from our API first
+          const userData = await api.get('/auth/user');
+          setUser(userData);
+          return;
+        } catch (apiError) {
+          // If API fails, create user object from Supabase data
+          const supabaseUser = {
+            sub: session.user.id,
+            email: session.user.email || '',
+            role: 'app20250904195901yvsuhcayno_v1_user',
+            isAdmin: false
+          };
+          setUser(supabaseUser);
+          return;
+        }
+      }
+      
+      // Try to get user from our API
       const userData = await api.get('/auth/user');
       setUser(userData);
     } catch (error) {
@@ -102,10 +154,31 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     refreshUser();
+  }, [refreshUser]);
+
+  // Listen to Supabase auth state changes
+  useEffect(() => {
+    if (!ENABLE_AUTH) return;
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Supabase auth state change:', event, session?.user?.email);
+      
+      if (event === 'SIGNED_IN' && session?.user) {
+        // User signed in with OAuth - refresh user data
+        await refreshUser();
+      } else if (event === 'SIGNED_OUT') {
+        // User signed out - clear user data
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [refreshUser]);
 
   const value = {
@@ -115,6 +188,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     register,
     logout,
     refreshUser,
+    googleLogin,
   };
 
   return (

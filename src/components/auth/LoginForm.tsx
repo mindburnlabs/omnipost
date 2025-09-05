@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +35,7 @@ export function LoginForm({
   const { login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const searchParams = useSearchParams();
 
   const {
     register,
@@ -42,6 +44,50 @@ export function LoginForm({
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
   });
+
+  // Handle OAuth errors from URL parameters
+  useEffect(() => {
+    const urlError = searchParams.get('error');
+    const urlMessage = searchParams.get('message');
+    
+    if (urlError) {
+      let errorMessage = 'Authentication failed';
+      
+      switch (urlError) {
+        case 'oauth_provider_error':
+          errorMessage = 'Google authentication failed';
+          break;
+        case 'auth_exchange_failed':
+          errorMessage = 'Failed to complete authentication';
+          break;
+        case 'database_error':
+          errorMessage = 'Database error during authentication';
+          break;
+        case 'oauth_error':
+          errorMessage = 'OAuth authentication error';
+          break;
+        case 'no_code':
+          errorMessage = 'Authentication was cancelled or failed';
+          break;
+        default:
+          errorMessage = 'Authentication failed';
+      }
+      
+      if (urlMessage) {
+        errorMessage += `: ${decodeURIComponent(urlMessage)}`;
+      }
+      
+      setError(errorMessage);
+      
+      // Clear the URL parameters to avoid showing the error again
+      if (typeof window !== 'undefined') {
+        const url = new URL(window.location.href);
+        url.searchParams.delete('error');
+        url.searchParams.delete('message');
+        window.history.replaceState({}, '', url.toString());
+      }
+    }
+  }, [searchParams]);
 
   const onSubmit = async (data: LoginFormData) => {
     try {

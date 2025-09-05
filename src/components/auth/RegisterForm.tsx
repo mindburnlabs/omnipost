@@ -15,6 +15,8 @@ import {
 import { useAuth } from "./AuthProvider";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { api } from "@/lib/api-client";
+import { Separator } from "@/components/ui/separator";
+import { GoogleLoginButton } from "./GoogleLoginButton";
 import { z } from "zod";
 
 const credentialsSchema = z.object({
@@ -189,12 +191,28 @@ export function RegisterForm({
         )}
 
         {currentStep === 1 && (
-          <form
-            onSubmit={credentialsForm.handleSubmit(handleCredentialsSubmit)}
-            className="space-y-4"
-          >
-            <div className="space-y-2">
-              <div className="mb-[4px] h-[22px] text-sm font-medium">Email</div>
+          <>
+            {/* Google登录按钮 */}
+            <div className="">
+              <GoogleLoginButton />
+              <div className="relative my-[20px]">
+                <div className="absolute inset-0 flex items-center">
+                  <Separator className="w-full" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    OR
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            <form
+              onSubmit={credentialsForm.handleSubmit(handleCredentialsSubmit)}
+              className="space-y-4"
+            >
+              <div className="space-y-2">
+                <div className="mb-[4px] h-[22px] text-sm font-medium">Email</div>
               <Input
                 id="email"
                 type="email"
@@ -251,7 +269,8 @@ export function RegisterForm({
                 </button>
               </div>
             )}
-          </form>
+            </form>
+          </>
         )}
 
         {currentStep === 2 && (
