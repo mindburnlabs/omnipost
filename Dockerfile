@@ -13,10 +13,11 @@ WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json* .npmrc ./
-# Install all dependencies (including dev dependencies for build)
-RUN npm ci
-# Rebuild native modules for the current platform
-RUN npm rebuild
+# Install dependencies with correct platform-specific optional packages (lightningcss, oxide, sharp, etc.)
+# Use npm install (not ci) to allow resolving Linux-specific optional deps even if lockfile was generated on macOS
+RUN npm install --include=optional --no-audit --progress=false
+# Ensure lightningcss native binding is present for this platform
+RUN npm rebuild lightningcss || true
 
 # Rebuild the source code only when needed
 FROM base AS builder
