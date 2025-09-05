@@ -17,10 +17,9 @@ export const POST = async (request: NextRequest) => {
       });
     }
 
-    // Use admin token to manage users
-    const adminToken = await generateAdminUserToken();
-    const usersCrud = new CrudOperations("users", adminToken);
-    const activitiesCrud = new CrudOperations("user_activities", adminToken);
+    // Use service role key to manage users
+    const usersCrud = new CrudOperations("users"); // Use service role key only
+    const activitiesCrud = new CrudOperations("user_activities");
 
     try {
       // Find existing user by Whop ID or email
@@ -146,8 +145,7 @@ export const GET = async (request: NextRequest) => {
       });
     }
 
-    const adminToken = await generateAdminUserToken();
-    const usersCrud = new CrudOperations("users", adminToken);
+    const usersCrud = new CrudOperations("users"); // Use service role key only
 
     // Find user by Whop user ID
     const users = await usersCrud.findMany({});

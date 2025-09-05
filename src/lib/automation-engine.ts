@@ -88,7 +88,7 @@ export class AutomationEngine {
     this.isProcessing = true;
 
     try {
-      const rulesCrud = new CrudOperations('automation_rules', this.adminToken);
+      const rulesCrud = new CrudOperations('automation_rules'); // Use service role key only
       const activeRules = await rulesCrud.findMany(
         { is_active: true },
         { orderBy: { column: 'last_run_at', direction: 'asc' } }
@@ -241,8 +241,8 @@ export class AutomationEngine {
 
   private async evaluateEngagementTrigger(conditions: any, userId: number): Promise<boolean> {
     try {
-      const metricsCrud = new CrudOperations('analytics_metrics', this.adminToken!);
-      const postsCrud = new CrudOperations('posts', this.adminToken!);
+      const metricsCrud = new CrudOperations('analytics_metrics'); // Use service role key only
+      const postsCrud = new CrudOperations('posts');
 
       const { metric, threshold, time_window } = conditions;
       
@@ -287,7 +287,7 @@ export class AutomationEngine {
 
   private async evaluateNewPostTrigger(conditions: any, userId: number, lastRunAt?: string): Promise<boolean> {
     try {
-      const postsCrud = new CrudOperations('posts', this.adminToken!);
+      const postsCrud = new CrudOperations('posts'); // Use service role key only
       
       const cutoffTime = lastRunAt ? new Date(lastRunAt) : new Date(Date.now() - 60 * 60 * 1000); // 1 hour ago
       
@@ -307,7 +307,7 @@ export class AutomationEngine {
 
   private async evaluateHashtagTrigger(conditions: any, userId: number): Promise<boolean> {
     try {
-      const postsCrud = new CrudOperations('posts', this.adminToken!);
+      const postsCrud = new CrudOperations('posts'); // Use service role key only
       
       const { hashtag, time_window } = conditions;
       const timeWindowMs = this.parseTimeWindow(time_window || '1h');
@@ -414,7 +414,7 @@ export class AutomationEngine {
   }
 
   private async executeCreatePostAction(config: any, userId: number): Promise<any> {
-    const postsCrud = new CrudOperations('posts', this.adminToken!);
+    const postsCrud = new CrudOperations('posts'); // Use service role key only
     
     const postData = {
       user_id: userId,
@@ -444,7 +444,7 @@ export class AutomationEngine {
   }
 
   private async executeRepostAction(config: any, userId: number): Promise<any> {
-    const postsCrud = new CrudOperations('posts', this.adminToken!);
+    const postsCrud = new CrudOperations('posts'); // Use service role key only
     
     // Find the original post
     const originalPost = await postsCrud.findById(config.original_post_id);
@@ -479,7 +479,7 @@ export class AutomationEngine {
   }
 
   private async executeSendNotificationAction(config: any, userId: number): Promise<any> {
-    const notificationsCrud = new CrudOperations('user_notifications', this.adminToken!);
+    const notificationsCrud = new CrudOperations('user_notifications'); // Use service role key only
     
     const notification = await notificationsCrud.create({
       user_id: userId,
@@ -495,7 +495,7 @@ export class AutomationEngine {
   }
 
   private async executeUpdateTemplateAction(config: any, userId: number): Promise<any> {
-    const templatesCrud = new CrudOperations('content_templates', this.adminToken!);
+    const templatesCrud = new CrudOperations('content_templates'); // Use service role key only
     
     const template = await templatesCrud.findById(config.template_id);
     if (!template || template.user_id !== userId) {
@@ -517,7 +517,7 @@ export class AutomationEngine {
     }
 
     try {
-      const rulesCrud = new CrudOperations('automation_rules', this.adminToken!);
+      const rulesCrud = new CrudOperations('automation_rules'); // Use service role key only
       const rule = await rulesCrud.findById(ruleId);
       
       if (!rule) {
@@ -585,7 +585,7 @@ export class AutomationEngine {
 
   private async updateRuleStats(ruleId: number, result: AutomationRunResult): Promise<void> {
     try {
-      const rulesCrud = new CrudOperations('automation_rules', this.adminToken!);
+      const rulesCrud = new CrudOperations('automation_rules'); // Use service role key only
       const rule = await rulesCrud.findById(ruleId);
       
       if (!rule) return;

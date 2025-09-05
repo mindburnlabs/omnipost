@@ -37,7 +37,7 @@ export class NotificationService {
 
     try {
       // Store in-app notification
-      const notificationsCrud = new CrudOperations('user_notifications', this.adminToken!);
+      const notificationsCrud = new CrudOperations('user_notifications'); // Use service role key only
       await notificationsCrud.create({
         ...notification,
         read: false,
@@ -45,7 +45,7 @@ export class NotificationService {
       });
 
       // Get user preferences
-      const profilesCrud = new CrudOperations('user_profiles', this.adminToken!);
+      const profilesCrud = new CrudOperations('user_profiles');
       const profiles = await profilesCrud.findMany({ user_id: notification.user_id });
       const preferences: NotificationPreferences = profiles[0]?.notification_preferences || {
         push: true,
@@ -82,7 +82,7 @@ export class NotificationService {
   private async sendEmailNotification(notification: Omit<Notification, 'id' | 'read' | 'created_at'>): Promise<void> {
     try {
       // Get user email
-      const usersCrud = new CrudOperations('users', this.adminToken!);
+      const usersCrud = new CrudOperations('users'); // Use service role key only
       const user = await usersCrud.findById(notification.user_id);
       
       if (!user?.email) {
@@ -150,7 +150,7 @@ export class NotificationService {
     }
 
     try {
-      const notificationsCrud = new CrudOperations('user_notifications', this.adminToken!);
+      const notificationsCrud = new CrudOperations('user_notifications'); // Use service role key only
       const notifications = await notificationsCrud.findMany(
         { user_id: userId },
         {
@@ -172,7 +172,7 @@ export class NotificationService {
     }
 
     try {
-      const notificationsCrud = new CrudOperations('user_notifications', this.adminToken!);
+      const notificationsCrud = new CrudOperations('user_notifications'); // Use service role key only
       
       // Verify ownership
       const notification = await notificationsCrud.findById(notificationId);
@@ -195,7 +195,7 @@ export class NotificationService {
     }
 
     try {
-      const notificationsCrud = new CrudOperations('user_notifications', this.adminToken!);
+      const notificationsCrud = new CrudOperations('user_notifications'); // Use service role key only
       const unreadNotifications = await notificationsCrud.findMany({
         user_id: userId,
         read: false

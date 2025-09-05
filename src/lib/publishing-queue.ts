@@ -101,7 +101,7 @@ export class PublishingQueue {
 
   private async syncWithDatabase() {
     try {
-      const postsCrud = new CrudOperations('posts', this.adminToken!);
+      const postsCrud = new CrudOperations('posts'); // Use service role key only
       const now = new Date();
       
       const scheduledPosts = await postsCrud.findMany(
@@ -136,10 +136,10 @@ export class PublishingQueue {
       job.updatedAt = new Date();
       this.queue.set(job.id, job);
 
-      const postsCrud = new CrudOperations('posts', this.adminToken!);
-      const connectionsCrud = new CrudOperations('platform_connections', this.adminToken!);
-      const postPlatformsCrud = new CrudOperations('post_platforms', this.adminToken!);
-      const activitiesCrud = new CrudOperations('user_activities', this.adminToken!);
+      const postsCrud = new CrudOperations('posts'); // Use service role key only
+      const connectionsCrud = new CrudOperations('platform_connections');
+      const postPlatformsCrud = new CrudOperations('post_platforms');
+      const activitiesCrud = new CrudOperations('user_activities');
 
       // Get post data
       const post = await postsCrud.findById(job.postId);
@@ -274,7 +274,7 @@ export class PublishingQueue {
         
         // Update post status to failed
         try {
-          const postsCrud = new CrudOperations('posts', this.adminToken!);
+          const postsCrud = new CrudOperations('posts'); // Use service role key only
           await postsCrud.update(job.postId, {
             status: 'failed',
             updated_at: new Date().toISOString()

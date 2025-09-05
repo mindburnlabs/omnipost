@@ -31,9 +31,8 @@ export async function GET(request: NextRequest) {
       if (session?.user) {
         try {
           // Create or update user in our database
-          const adminToken = await generateAdminUserToken()
-          const usersCrud = new CrudOperations('users', adminToken)
-          const activitiesCrud = new CrudOperations('user_activities', adminToken)
+          const usersCrud = new CrudOperations('users') // Use service role key only
+          const activitiesCrud = new CrudOperations('user_activities')
 
           // Check if user exists
           const existingUsers = await usersCrud.findMany({ email: session.user.email })

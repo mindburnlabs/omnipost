@@ -318,7 +318,7 @@ export class AIService {
     }
 
     try {
-      const configsCrud = new CrudOperations("user_ai_configurations", this.adminToken!);
+      const configsCrud = new CrudOperations("user_ai_configurations"); // Use service role key only
       const configs = await configsCrud.findMany({ user_id: userId, is_default: true });
       
       if (configs.length > 0) {

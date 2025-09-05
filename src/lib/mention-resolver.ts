@@ -79,7 +79,7 @@ export class MentionResolver {
     connectionId: number
   ): Promise<MentionResolution> {
     try {
-      const connectionsCrud = new CrudOperations('platform_connections', this.adminToken!);
+      const connectionsCrud = new CrudOperations('platform_connections'); // Use service role key only
       const connection = await connectionsCrud.findById(connectionId);
 
       if (!connection) {

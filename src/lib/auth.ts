@@ -34,10 +34,10 @@ export async function authCrudOperations(): Promise<{
     const adminUserToken = await generateAdminUserToken();
 
     cachedAuthCrud = {
-      usersCrud: new CrudOperations("users", adminUserToken),
-      sessionsCrud: new CrudOperations("sessions", adminUserToken),
-      refreshTokensCrud: new CrudOperations("refresh_tokens", adminUserToken),
-      userPasscodeCrud: new CrudOperations("user_passcode", adminUserToken),
+      usersCrud: new CrudOperations("users"), // Use service role key only
+      sessionsCrud: new CrudOperations("sessions"),
+      refreshTokensCrud: new CrudOperations("refresh_tokens"),
+      userPasscodeCrud: new CrudOperations("user_passcode"),
       createdAt: now,
     };
   }

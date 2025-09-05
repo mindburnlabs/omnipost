@@ -52,10 +52,10 @@ export class PublishingEngine {
     this.isProcessing = true;
 
     try {
-      const postsCrud = new CrudOperations('posts', this.adminToken);
-      const connectionsCrud = new CrudOperations('platform_connections', this.adminToken);
-      const postPlatformsCrud = new CrudOperations('post_platforms', this.adminToken);
-      const activitiesCrud = new CrudOperations('user_activities', this.adminToken);
+      const postsCrud = new CrudOperations('posts'); // Use service role key only
+      const connectionsCrud = new CrudOperations('platform_connections');
+      const postPlatformsCrud = new CrudOperations('post_platforms');
+      const activitiesCrud = new CrudOperations('user_activities');
 
       // Find posts that are scheduled and due for publishing
       const now = new Date();
@@ -246,7 +246,7 @@ export class PublishingEngine {
       throw new Error('Publishing engine not initialized');
     }
 
-    const postsCrud = new CrudOperations('posts', this.adminToken);
+    const postsCrud = new CrudOperations('posts'); // Use service role key only
     
     // Update post in database
     await postsCrud.update(postId, {
@@ -269,7 +269,7 @@ export class PublishingEngine {
       throw new Error('Publishing engine not initialized');
     }
 
-    const postsCrud = new CrudOperations('posts', this.adminToken);
+    const postsCrud = new CrudOperations('posts'); // Use service role key only
     
     // Set scheduled time to now to trigger immediate processing
     const now = new Date();
@@ -298,7 +298,7 @@ export class PublishingEngine {
       throw new Error('Publishing engine not initialized');
     }
 
-    const postsCrud = new CrudOperations('posts', this.adminToken);
+    const postsCrud = new CrudOperations('posts'); // Use service role key only
     
     // Reset post status and schedule for immediate retry
     const now = new Date();
