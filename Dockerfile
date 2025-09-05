@@ -41,6 +41,9 @@ COPY . .
 ENV NODE_ENV=production
 ENV DOCKER_BUILD=true
 ENV NEXT_TELEMETRY_DISABLED=1
+# Force WASM fallbacks for native modules to ensure cross-platform builds
+ENV NAPI_RS_FORCE_WASI=1
+ENV CSS_TRANSFORMER_WASM=1
 
 # Build the app
 RUN npm run build
@@ -52,6 +55,9 @@ WORKDIR /app
 ENV NODE_ENV=production
 # Disable telemetry during runtime
 ENV NEXT_TELEMETRY_DISABLED=1
+# Force WASM fallbacks in runtime as well (harmless, build is primary)
+ENV NAPI_RS_FORCE_WASI=1
+ENV CSS_TRANSFORMER_WASM=1
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
