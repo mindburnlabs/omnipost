@@ -1,0 +1,25 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile.web"
+buildCommand = "npm run build"
+
+[deploy]
+healthcheckPath = "/api/health"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 5
+numReplicas = 1
+
+[environments.production]
+variables = { 
+  NODE_ENV = "production",
+  SERVICE_NAME = "omnipost-web",
+  PORT = "3000"
+}
+
+[environments.staging]
+variables = { 
+  NODE_ENV = "staging",
+  SERVICE_NAME = "omnipost-web",
+  PORT = "3000"
+}

@@ -1,0 +1,53 @@
+# ===========================================
+# OMNIPOST WORKER SERVICE (Background Processing)
+# ===========================================
+
+FROM node:18-alpine AS base
+
+# Install dependencies for background processing
+FROM base AS deps
+RUN apk add --no-cache libc6-compat curl
+WORKDIR /app
+
+# Install dependencies
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
+
+# Production runner
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 worker
+
+# Copy node_modules from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+
+# Copy application code
+COPY --chown=worker:nodejs . .
+
+# Create required directories
+RUN mkdir -p logs temp
+
+# Fix native dependencies
+RUN npm run postinstall
+
+USER worker
+
+# Health check endpoint (simple HTTP server for health checks)
+EXPOSE 3001
+ENV WORKER_PORT 3001
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=10s --retries=3 \
+  CMD curl -f http://localhost:3001/health || exit 1
+
+# Start worker services
+CMD ["node", "scripts/start-worker.js"]

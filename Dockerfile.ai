@@ -1,0 +1,53 @@
+# ===========================================
+# OMNIPOST AI SERVICE (Content Generation & Processing)
+# ===========================================
+
+FROM node:18-alpine AS base
+
+# Install dependencies for AI processing
+FROM base AS deps
+RUN apk add --no-cache libc6-compat curl python3 make g++
+WORKDIR /app
+
+# Install dependencies
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
+
+# Production runner
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 aiworker
+
+# Copy node_modules from deps stage
+COPY --from=deps /app/node_modules ./node_modules
+
+# Copy application code (AI-specific files only)
+COPY --chown=aiworker:nodejs . .
+
+# Create required directories for AI processing
+RUN mkdir -p logs temp ai-cache models
+
+# Fix native dependencies
+RUN npm run postinstall
+
+USER aiworker
+
+# AI Service port
+EXPOSE 3002
+ENV AI_SERVICE_PORT 3002
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=15s --retries=3 \
+  CMD curl -f http://localhost:3002/health || exit 1
+
+# Start AI service
+CMD ["node", "scripts/start-ai-service.js"]
