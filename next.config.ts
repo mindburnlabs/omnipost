@@ -2,6 +2,7 @@
 import type { NextConfig } from "next";
 
 const isRailway = process.env.RAILWAY_ENVIRONMENT === 'production';
+const isDockerBuild = process.env.DOCKER_BUILD === 'true' || process.env.NODE_ENV === 'production';
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -10,8 +11,8 @@ const nextConfig: NextConfig = {
     // Allow builds to complete even with ESLint errors (use sparingly)
     ignoreDuringBuilds: false,
   },
-  // Railway optimizations
-  output: isRailway ? 'standalone' : undefined,
+  // Railway and Docker optimizations
+  output: (isRailway || isDockerBuild) ? 'standalone' : undefined,
   compress: true,
   poweredByHeader: false,
   async headers() {

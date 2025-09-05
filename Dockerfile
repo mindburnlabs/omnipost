@@ -1,21 +1,33 @@
-# Use Node.js 18 Alpine for smaller image size
-FROM node:18-alpine AS base
+# Use Node.js 20 Debian for better native module compatibility (TailwindCSS 4 + lightningcss)
+FROM node:20-slim AS base
 
 # Install dependencies only when needed
 FROM base AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine
-RUN apk add --no-cache libc6-compat
+# Install necessary build tools for native modules
+RUN apt-get update && apt-get install -y \
+    python3 \
+    make \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 # Copy package files
 COPY package.json package-lock.json* .npmrc ./
+# Install all dependencies (including dev dependencies for build)
 RUN npm ci
+# Rebuild native modules for the current platform
+RUN npm rebuild
 
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+
+# Set environment variables for build
+ENV NODE_ENV=production
+ENV DOCKER_BUILD=true
+ENV NEXT_TELEMETRY_DISABLED=1
 
 # Build the app
 RUN npm run build
