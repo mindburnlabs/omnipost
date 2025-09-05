@@ -5,22 +5,3 @@ builder = "nixpacks"
 healthcheckPath = "/"
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
-
-[[services]]
-name = "omnipost"
-
-[services.source]
-repo = "mindburnlabs/omnipost"
-branch = "main"
-
-[services.build]
-buildCommand = "npm run build"
-startCommand = "npm start"
-
-[services.variables]
-NODE_ENV = "production"
-PORT = 3000
-
-[services.healthcheck]
-path = "/"
-timeout = 300
