@@ -1,5 +1,12 @@
 # Use Node.js 20 Debian for better native module compatibility (TailwindCSS 4 + lightningcss)
 FROM node:20-slim AS base
+# Install runtime libraries required by native bindings (Rust/C++)
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    libc6 \
+    libgcc-s1 \
+    libstdc++6 \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -19,6 +26,8 @@ RUN npm install --include=optional --no-audit --progress=false
 # Explicitly install Linux native lightningcss binary to ensure presence of .node binding
 # Use --no-save so package.json/lockfile are not modified
 RUN npm install --no-save lightningcss-linux-x64-gnu@1.30.1 || true
+# Ensure Tailwind Oxide native binding (Linux glibc x64) is present
+RUN npm install --no-save @tailwindcss/oxide-linux-x64-gnu@4.1.11 || true
 # Ensure lightningcss native binding is present for this platform
 RUN npm rebuild lightningcss || true
 
