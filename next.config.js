@@ -3,11 +3,6 @@ const nextConfig = {
   // Enable standalone output for Docker deployment
   output: 'standalone',
   
-  // Disable telemetry for production builds
-  telemetry: {
-    enabled: false,
-  },
-  
   // Production-optimized settings
   productionBrowserSourceMaps: false,
   poweredByHeader: false,
@@ -23,6 +18,9 @@ const nextConfig = {
     // Disable image optimization in multi-service setup for simplicity
     unoptimized: true,
   },
+  
+  // Server external packages (moved from experimental in Next.js 15)
+  serverExternalPackages: ['@supabase/postgrest-js'],
   
   // API routes configuration
   async rewrites() {
@@ -55,9 +53,6 @@ const nextConfig = {
   
   // Experimental features for production optimization
   experimental: {
-    // Enable server components optimization
-    serverComponentsExternalPackages: ['@supabase/postgrest-js'],
-    
     // Optimize package imports
     optimizePackageImports: [
       '@radix-ui/react-icons',
@@ -138,9 +133,6 @@ const nextConfig = {
   
   // Development-specific configuration
   ...(process.env.NODE_ENV === 'development' && {
-    // Enable faster development builds
-    swcMinify: true,
-    
     // Development server configuration
     devIndicators: {
       buildActivity: true,
@@ -151,7 +143,6 @@ const nextConfig = {
   // Production-specific configuration
   ...(process.env.NODE_ENV === 'production' && {
     // Enable all production optimizations
-    swcMinify: true,
     compiler: {
       // Remove console.log in production (except errors)
       removeConsole: {
