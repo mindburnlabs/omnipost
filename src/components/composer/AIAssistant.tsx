@@ -319,7 +319,8 @@ export function AIAssistant({
         const reader = new FileReader();
         reader.onload = () => {
           const result = reader.result as string;
-          resolve(result.split(',')[1]); // Remove data:image/... prefix
+          const base64Part = result.split(',')[1];
+          resolve(base64Part || result); // Remove data:image/... prefix or use full result
         };
         reader.readAsDataURL(imageFile);
       });

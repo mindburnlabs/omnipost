@@ -108,7 +108,10 @@ export class PublishingEngine {
       });
 
       // Get platform connections for this post
-      const selectedPlatformIds = post.metadata?.platforms || [];
+      const selectedPlatformIdsUnknown = (post.metadata as Record<string, unknown> | undefined)?.platforms as unknown;
+      const selectedPlatformIds: number[] = Array.isArray(selectedPlatformIdsUnknown)
+        ? (selectedPlatformIdsUnknown as unknown[]).filter((id): id is number => typeof id === 'number')
+        : [];
       if (selectedPlatformIds.length === 0) {
         throw new Error('No platforms selected for this post');
       }

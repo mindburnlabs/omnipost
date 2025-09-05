@@ -23,7 +23,8 @@ class DiscordPublisher implements PlatformPublisher {
 
   async testConnection(): Promise<{ success: boolean; message: string }> {
     try {
-      const webhookUrl = this.connection.api_credentials.webhook_url;
+      const webhookUrlValue = this.connection.api_credentials.webhook_url;
+      const webhookUrl = typeof webhookUrlValue === 'string' ? webhookUrlValue : '';
       if (!webhookUrl) {
         return { success: false, message: 'Discord webhook URL not configured' };
       }
@@ -65,7 +66,8 @@ class DiscordPublisher implements PlatformPublisher {
         };
       }
 
-      const webhookUrl = this.connection.api_credentials.webhook_url;
+      const webhookUrlValue = this.connection.api_credentials.webhook_url;
+      const webhookUrl = typeof webhookUrlValue === 'string' ? webhookUrlValue : '';
       if (!webhookUrl) {
         throw new Error('Discord webhook URL not configured');
       }
@@ -114,7 +116,7 @@ class DiscordPublisher implements PlatformPublisher {
         success: true,
         platformPostId: messageId,
         metadata: {
-          webhook_url: webhookUrl.split('/').slice(-2).join('/'), // Last 2 parts for logging
+          webhook_url: typeof webhookUrl === 'string' ? webhookUrl.split('/').slice(-2).join('/') : undefined, // Last 2 parts for logging
           published_at: new Date().toISOString(),
           response_status: response.status
         }

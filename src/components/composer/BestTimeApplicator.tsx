@@ -45,7 +45,7 @@ export function BestTimeApplicator({
   const fetchBestTimes = useCallback(async () => {
     setLoading(true);
     try {
-      const platform = selectedPlatforms.length === 1 ? getPlatformType(selectedPlatforms[0]) : undefined;
+      const platform = selectedPlatforms.length === 1 ? getPlatformType(selectedPlatforms[0] || 0) : undefined;
       const timesDTO = await postingTimeApi.getBestTimes(platform, selectedTimezone);
       
       // Normalize the data to ensure confidence is always a string

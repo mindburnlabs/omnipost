@@ -131,7 +131,7 @@ export function ContentEditor({
                 size="sm"
                 onClick={() => insertFormatting('image')}
               >
-                <Image className="h-4 w-4" alt="" />
+                <Image className="h-4 w-4" />
               </Button>
               <Separator orientation="vertical" className="h-6" />
               <Button
