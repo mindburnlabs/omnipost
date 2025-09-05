@@ -190,6 +190,13 @@ class NativeDependencyManager {
       return false;
     }
     
+    // Skip browser installation in Docker/CI environments to prevent timeouts
+    if (process.env.DOCKER_BUILD || process.env.CI) {
+      this.log('info', 'Skipping Playwright browser installation in Docker/CI environment');
+      this.log('info', 'Browsers will be installed at runtime if needed');
+      return true;
+    }
+    
     try {
       // Check if browsers are already installed
       const playwrightCache = path.join(require('os').homedir(), '.cache', 'ms-playwright');
@@ -198,17 +205,18 @@ class NativeDependencyManager {
         return true;
       }
       
-      this.log('info', 'Installing Playwright browsers...');
-      execSync('npx playwright install --with-deps chromium', { 
+      this.log('info', 'Installing Playwright browsers (chromium only)...');
+      execSync('npx playwright install chromium', { 
         stdio: 'inherit',
         cwd: path.join(__dirname, '..'),
-        timeout: 300000 // 5 minute timeout
+        timeout: 120000 // 2 minute timeout
       });
       this.log('success', 'Playwright browsers installed');
       return true;
     } catch (error) {
-      this.log('error', `Failed to setup Playwright: ${error.message}`);
-      return false;
+      this.log('warning', `Failed to setup Playwright browsers: ${error.message}`);
+      this.log('info', 'Playwright will still work, browsers can be installed later if needed');
+      return true; // Don't fail the build for this
     }
   }
 

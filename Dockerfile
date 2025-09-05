@@ -21,9 +21,9 @@ WORKDIR /app
 # Copy package files and scripts (needed for postinstall)
 COPY package.json package-lock.json* .npmrc ./
 COPY scripts/ ./scripts/
-# Install dependencies with correct platform-specific optional packages (lightningcss, oxide, sharp, etc.)
-# Use npm install (not ci) to allow resolving Linux-specific optional deps even if lockfile was generated on macOS
-RUN npm install --include=optional --no-audit --progress=false
+# Install dependencies with platform-specific optional packages
+# Use npm ci for faster, more reliable builds in Docker
+RUN npm ci --include=optional --no-audit --no-progress
 
 # Rebuild the source code only when needed
 FROM base AS builder
