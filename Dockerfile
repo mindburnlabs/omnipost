@@ -22,8 +22,8 @@ WORKDIR /app
 COPY package.json package-lock.json* .npmrc ./
 COPY scripts/ ./scripts/
 # Install dependencies with platform-specific optional packages
-# Use npm ci for faster, more reliable builds in Docker
-RUN npm ci --include=optional --no-audit --no-progress
+# Use npm install for better compatibility with dynamic native dependencies
+RUN npm install --include=optional --no-audit --progress=false
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -36,6 +36,13 @@ ENV NODE_ENV=production
 ENV DOCKER_BUILD=true
 ENV NEXT_TELEMETRY_DISABLED=1
 # The universal native dependency manager will set WASM env vars automatically if needed
+
+# Build-time environment variables for Supabase
+# These need to be provided during docker build using --build-arg
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 # Build the app
 RUN npm run build
