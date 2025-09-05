@@ -16,6 +16,9 @@ COPY package.json package-lock.json* .npmrc ./
 # Install dependencies with correct platform-specific optional packages (lightningcss, oxide, sharp, etc.)
 # Use npm install (not ci) to allow resolving Linux-specific optional deps even if lockfile was generated on macOS
 RUN npm install --include=optional --no-audit --progress=false
+# Explicitly install Linux native lightningcss binary to ensure presence of .node binding
+# Use --no-save so package.json/lockfile are not modified
+RUN npm install --no-save lightningcss-linux-x64-gnu@1.30.1 || true
 # Ensure lightningcss native binding is present for this platform
 RUN npm rebuild lightningcss || true
 
