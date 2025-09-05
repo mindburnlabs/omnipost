@@ -10,19 +10,28 @@ import { LandingPage } from "@/components/landing/LandingPage";
 export default function Home() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
-  const [initialLoad, setInitialLoad] = useState(true);
+  const [showLanding, setShowLanding] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    
     console.log('Home page effect:', { isLoading, user: !!user, ENABLE_AUTH });
     
-    // Set a timeout to ensure we don't get stuck in loading state
-    const timeout = setTimeout(() => {
-      console.log('Timeout reached, showing landing page');
-      setInitialLoad(false);
-    }, 3000); // 3 second timeout
+    // Force show landing page after a short delay to prevent loading issues
+    const fallbackTimer = setTimeout(() => {
+      if (!user) {
+        console.log('Fallback: Showing landing page after timeout');
+        setShowLanding(true);
+      }
+    }, 1500);
 
     if (!isLoading) {
-      clearTimeout(timeout);
+      clearTimeout(fallbackTimer);
       
       // If user is authenticated, redirect to dashboard
       if (user) {
@@ -38,16 +47,26 @@ export default function Home() {
         return;
       }
       
-      // Auth is enabled but no user - show landing page
+      // Auth is enabled but no user - show landing page immediately
       console.log('Auth enabled, no user, showing landing page');
-      setInitialLoad(false);
+      setShowLanding(true);
     }
 
-    return () => clearTimeout(timeout);
-  }, [router, user, isLoading]);
+    return () => clearTimeout(fallbackTimer);
+  }, [router, user, isLoading, mounted]);
 
-  // Show loading spinner only for a short time
-  if (isLoading && initialLoad) {
+  // Don't render anything during hydration
+  if (!mounted) {
+    return null;
+  }
+
+  // Show landing page if explicitly set to show or if conditions are met
+  if (showLanding || (ENABLE_AUTH && !user && !isLoading)) {
+    return <LandingPage />;
+  }
+
+  // Show loading only briefly
+  if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center space-y-4">
@@ -58,11 +77,6 @@ export default function Home() {
     );
   }
 
-  // Show landing page for unauthenticated users when auth is enabled
-  if (ENABLE_AUTH && !user) {
-    return <LandingPage />;
-  }
-
-  // Fallback - should not reach here, but show landing page anyway
+  // Default fallback
   return <LandingPage />;
 }
