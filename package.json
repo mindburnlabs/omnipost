@@ -18,8 +18,8 @@
     "test:e2e": "playwright test",
     "clean": "rm -rf .next out coverage",
     "check": "npm run type-check && npm run lint && npm run format:check",
-    "postinstall": "node scripts/fix-native-deps.js",
-    "prebuild": "node scripts/fix-native-deps.js"
+    "postinstall": "echo 'Dependencies installed successfully'",
+    "prebuild": "echo 'Preparing build'"
   },
   "dependencies": {
     "@emotion/is-prop-valid": "latest",
