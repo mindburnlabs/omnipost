@@ -56,10 +56,17 @@ const server = http.createServer(async (req, res) => {
 });
 
 // Start server
-const port = process.env.WORKER_PORT || 3001;
+const port = process.env.PORT || process.env.WORKER_PORT || 3001;
+
+console.log(`🔧 Environment: NODE_ENV=${process.env.NODE_ENV}`);
+console.log(`🔧 Port configuration: PORT=${process.env.PORT}, WORKER_PORT=${process.env.WORKER_PORT}, using=${port}`);
+
 server.listen(port, '0.0.0.0', () => {
   console.log(`✅ Worker service listening on port ${port}`);
   console.log(`🔍 Health check available at http://localhost:${port}/health`);
+}).on('error', (err) => {
+  console.error('❌ Server failed to start:', err);
+  process.exit(1);
 });
 
 // Graceful shutdown
