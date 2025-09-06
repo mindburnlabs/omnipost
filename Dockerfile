@@ -1,77 +1,61 @@
-# Use Node.js 20 Debian for better native module compatibility (TailwindCSS 4 + lightningcss)
-FROM node:20-slim AS base
-# Install runtime libraries required by native bindings (Rust/C++)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates \
-    libc6 \
-    libgcc-s1 \
-    libstdc++6 \
-    && rm -rf /var/lib/apt/lists/*
+# ===========================================
+# UNIFIED OMNIPOST RAILWAY DOCKERFILE
+# ===========================================
 
-# Install dependencies only when needed
+FROM node:18-alpine AS base
+
+# Install system dependencies for all services
 FROM base AS deps
-# Install necessary build tools for native modules
-RUN apt-get update && apt-get install -y \
-    python3 \
-    make \
-    g++ \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache libc6-compat curl python3 make g++
 WORKDIR /app
 
-# Copy package files and scripts (needed for postinstall)
-COPY package.json package-lock.json* .npmrc ./
-COPY scripts/ ./scripts/
-# Install dependencies with platform-specific optional packages
-# Use npm install for better compatibility with dynamic native dependencies
-RUN npm install --include=optional --no-audit --progress=false
+# Install npm dependencies
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm install --legacy-peer-deps; \
+  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
+  else npm install --legacy-peer-deps; \
+  fi
 
-# Rebuild the source code only when needed
+# Build Next.js for web service (only when needed)
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+RUN mkdir -p public
+RUN npm run postinstall
+# Only build Next.js if we need it (web service)
+RUN if [ "$RAILWAY_SERVICE_NAME" = "omnipost-web" ] || [ "$RAILWAY_SERVICE_NAME" = "omnipost" ] || [ -z "$RAILWAY_SERVICE_NAME" ]; then npm run build; else echo "Skipping Next.js build for non-web service"; fi
 
-# Set environment variables for build
-ENV NODE_ENV=production
-ENV DOCKER_BUILD=true
-ENV NEXT_TELEMETRY_DISABLED=1
-# The universal native dependency manager will set WASM env vars automatically if needed
-
-# Build-time environment variables for Supabase
-# These need to be provided during docker build using --build-arg
-ARG NEXT_PUBLIC_SUPABASE_URL
-ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
-ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
-ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-# Build the app
-RUN npm run build
-
-# Production image, copy all the files and run next
+# Production runtime
 FROM base AS runner
 WORKDIR /app
+ENV NODE_ENV production
 
-ENV NODE_ENV=production
-# Disable telemetry during runtime
-ENV NEXT_TELEMETRY_DISABLED=1
-
+# Create appropriate user based on service
 RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+RUN adduser --system --uid 1001 appuser
 
-# Copy built application  
-# Copy public directory (create empty one first as fallback)
-RUN mkdir -p ./public
-COPY --from=builder /app/public ./public
+# Copy dependencies and application code
+COPY --from=deps /app/node_modules ./node_modules
+COPY --chown=appuser:nodejs . .
 
-# Automatically leverage output traces to reduce image size
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+# Copy Next.js build if it exists (for web service)
+COPY --from=builder --chown=appuser:nodejs /app/.next/standalone* ./ 2>/dev/null || echo "No Next.js build found"
+COPY --from=builder --chown=appuser:nodejs /app/.next/static* ./.next/static/ 2>/dev/null || echo "No Next.js static files found"
+COPY --from=builder /app/public ./public 2>/dev/null || echo "No public directory found"
 
-USER nextjs
+# Create service-specific directories
+RUN mkdir -p logs temp ai-cache models .next && chown appuser:nodejs logs temp ai-cache models .next
 
-EXPOSE 3000
+# Final setup
+USER appuser
+EXPOSE ${PORT:-3000}
 
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
+# Health check (will be overridden by Railway for specific services)
+HEALTHCHECK --interval=30s --timeout=30s --start-period=15s --retries=3 \
+  CMD curl -f http://localhost:${PORT:-3000}/health || curl -f http://localhost:${PORT:-3000}/api/health || exit 1
 
-CMD ["node", "server.js"]
+# Universal startup command that detects service type
+CMD ["node", "start-service.js"]

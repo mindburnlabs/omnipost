@@ -1,5 +1,0 @@
-[build]
-cmd = "docker build -f Dockerfile.ai ."
-
-[start]
-cmd = "node scripts/start-ai-simple.js"

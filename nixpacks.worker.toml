@@ -1,5 +1,0 @@
-[build]
-cmd = "docker build -f Dockerfile.worker ."
-
-[start]
-cmd = "node scripts/start-worker-simple.js"

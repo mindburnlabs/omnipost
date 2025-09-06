@@ -1,10 +1,9 @@
 [build]
 builder = "dockerfile"
-dockerfilePath = "Dockerfile.web"
-buildCommand = "npm run build"
+dockerfilePath = "Dockerfile"
 
 [deploy]
-healthcheckPath = "/api/health"
+healthcheckPath = "/health"
 healthcheckTimeout = 30
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 5
