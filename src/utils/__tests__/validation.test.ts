@@ -89,14 +89,14 @@ describe('Validation Utilities', () => {
       });
 
       it('should remove javascript: protocols', () => {
-        const maliciousHtml = '<a href="javascript:alert(\\'xss\\')">Click me</a>';
+        const maliciousHtml = '<a href="javascript:alert(\'xss\')">Click me</a>';
         const result = sanitize.html(maliciousHtml);
         
         expect(result).not.toContain('javascript:');
       });
 
       it('should remove event handlers', () => {
-        const maliciousHtml = '<div onclick="alert(\\'xss\\')">Content</div>';
+        const maliciousHtml = '<div onclick="alert(\'xss\')">Content</div>';
         const result = sanitize.html(maliciousHtml);
         
         expect(result).not.toContain('onclick=');

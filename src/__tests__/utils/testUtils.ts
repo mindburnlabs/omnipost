@@ -8,7 +8,7 @@ export function createMockRequest(options: {
   method?: string;
   url?: string;
   headers?: Record<string, string>;
-  body?: any;
+  body?: unknown;
   ip?: string;
 }): NextRequest {
   const {
@@ -103,7 +103,7 @@ export const assertions = {
   /**
    * Assert that a response matches the API success format
    */
-  expectApiSuccess: (response: any, expectedData?: any) => {
+  expectApiSuccess: (response: unknown, expectedData?: unknown) => {
     expect(response).toMatchObject({
       success: true,
       data: expectedData || expect.any(Object),
@@ -114,7 +114,7 @@ export const assertions = {
   /**
    * Assert that a response matches the API error format
    */
-  expectApiError: (response: any, expectedCode?: string, expectedStatus?: number) => {
+  expectApiError: (response: unknown, expectedCode?: string) => {
     expect(response).toMatchObject({
       success: false,
       error: {
@@ -243,15 +243,15 @@ export const simulateErrors = {
   },
 
   databaseError: () => {
-    const error = new Error('Database connection failed');
-    (error as any).code = '57P01'; // PostgreSQL connection failure
+    const error = new Error('Database connection failed') as Error & { code: string };
+    error.code = '57P01'; // PostgreSQL connection failure
     throw error;
   },
 
   validationError: (field: string, message: string) => {
-    const error = new Error(message);
+    const error = new Error(message) as Error & { details: Array<{ field: string; message: string; code: string }> };
     error.name = 'ValidationError';
-    (error as any).details = [{ field, message, code: 'invalid' }];
+    error.details = [{ field, message, code: 'invalid' }];
     throw error;
   },
 

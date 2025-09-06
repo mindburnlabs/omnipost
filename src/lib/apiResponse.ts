@@ -401,8 +401,8 @@ export function createPaginationMeta(
 /**
  * Decorator to wrap API route handlers with standardized error handling
  */
-export function apiRoute(handler: Function) {
-  return async function wrappedHandler(req: Request, context?: any) {
+export function apiRoute(handler: (req: Request, context?: unknown) => Promise<Response>) {
+  return async function wrappedHandler(req: Request, context?: unknown) {
     try {
       return await handler(req, context);
     } catch (error) {

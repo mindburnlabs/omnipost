@@ -134,8 +134,8 @@ export function createValidationError(errors: z.ZodError['errors']) {
 
 // Middleware helper for API routes
 export function withValidation<T>(schema: z.ZodSchema<T>) {
-  return (handler: (validatedData: T, ...args: any[]) => any) => {
-    return async (req: any, ...args: any[]) => {
+  return (handler: (validatedData: T, ...args: unknown[]) => unknown) => {
+    return async (req: { body: unknown }, ...args: unknown[]) => {
       const validation = validateRequest(schema, req.body);
       
       if (!validation.success) {
