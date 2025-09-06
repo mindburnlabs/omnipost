@@ -12,13 +12,11 @@ numReplicas = 1
 [environments.production]
 variables = { 
   NODE_ENV = "production",
-  SERVICE_NAME = "omnipost-worker",
-  WORKER_PORT = "3001"
+  SERVICE_NAME = "omnipost-worker"
 }
 
 [environments.staging]
 variables = { 
   NODE_ENV = "staging",
-  SERVICE_NAME = "omnipost-worker",
-  WORKER_PORT = "3001"
+  SERVICE_NAME = "omnipost-worker"
 }
